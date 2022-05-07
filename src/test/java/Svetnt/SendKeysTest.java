@@ -7,10 +7,10 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 import java.util.concurrent.TimeUnit;
 
-public class MainTest {
+public class SendKeysTest {
 
     @Test
-    public void testMyTest() {
+    public void sendKeysTest() {
 
         System.setProperty("webdriver.chrome.driver", "C:\\Drivers\\Chromedriver\\chromedriver.exe");
 
