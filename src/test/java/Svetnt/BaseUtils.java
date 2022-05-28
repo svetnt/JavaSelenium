@@ -37,7 +37,6 @@ public final class BaseUtils {
         }
     }
 
-
     private static final ChromeOptions chromeOptions;
 
     static {
