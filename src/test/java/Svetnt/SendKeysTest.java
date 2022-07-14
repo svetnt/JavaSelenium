@@ -18,18 +18,9 @@ public class SendKeysTest {
 
         driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
 
-        driver.get("https://stepik.org/catalog");
+        driver.get("http://www.99-bottles-of-beer.net/");
 
-        WebElement input = driver.findElementByXPath("//input[@placeholder=\"Название курса, автор или предмет\"]");
-
-        input.sendKeys("selenium", Keys.ENTER);
-
-        String actualResult = input.getAttribute("value");
-        String expectedResult = "selenium";
-
-        Assert.assertEquals(actualResult, expectedResult);
 
         driver.quit();
-
     }
 }

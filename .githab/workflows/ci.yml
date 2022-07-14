@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  run-test:
+    name: 'Run Tests'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Git clone
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Install JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+
+      - name: Cache maven
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('./pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Get list of changed files
+        run: echo "LIST_OF_CHANGED_FILES=$(git diff --name-only origin/$GITHUB_HEAD_REF $(git merge-base origin/$GITHUB_HEAD_REF origin/main) | tr '\n' ';')" >> $GITHUB_ENV
+
+      - name: Prepare Jenkins data
+        run: |
+          cat ${{ github.workspace }}/jenkins_data/jenkins_backup0* > ${{ github.workspace }}/jenkins_backup.tar
+          md5sum ${{ github.workspace }}/jenkins_backup.tar
+
+      - name: Extract Jenkins data and set permission
+        run: |
+          tar -xzvf ./jenkins_backup.tar
+          chmod -R 777 ./jenkins_backup/var/jenkins_home
+
+      - name: Docker login
+        run: echo ${{ secrets.DOCKER_PAS }} | docker login --username ${{ secrets.DOCKER_USER }} --password-stdin
+
+      - name: Docker start
+        run: docker run --rm --detach -p 8080:8080 -p 50000:50000 -v ${{ github.workspace }}/jenkins_backup/var/jenkins_home:/var/jenkins_home jenkins/jenkins:2.332.3-lts-jdk11
+
+      - name: Wait for the Jenkins
+        run: ./.github/wait-for-jenkins.sh
+
+      - name: Maven test
+        id: test
+        run: mvn test
+        env:
+          CHROME_OPTIONS: --disable-gpu;--no-sandbox;--disable-dev-shm-usage;--headless;--window-size=1920,1080
+          APP_OPTIONS: port=8080;admin.username=${{ secrets.ADMIN_USER }};admin.password=${{ secrets.ADMIN_PAS }}
+          CI_RUN: true
+        continue-on-error: true
+
+      - name: Attach screenshots
+        uses: actions/upload-artifact@v2
+        if: steps.test.outcome != 'success'
+        with:
+          name: Screenshots
+          path: ScreenshotsFailure
+
+      - name: Check on failures
+        if: steps.test.outcome != 'success'
+        run: exit 1
