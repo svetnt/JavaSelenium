@@ -26,4 +26,9 @@ public class ErrorPage extends BasePage {
 
         return errorMessage.getText();
     }
+
+    public boolean isDisplayedErrorHeader() {
+
+        return headerWithError.isDisplayed();
+    }
 }

@@ -1,10 +1,17 @@
-package runner;
-
-import model.HomePage;
-import model.NewItemPage;
+import model.*;
+import model.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.testng.Assert;
-        import org.testng.annotations.Test;
-        import org.testng.asserts.SoftAssert;
+import org.testng.annotations.Test;
+import org.testng.asserts.SoftAssert;
+import runner.BaseTest;
+import runner.ProjectUtils;
+import runner.TestUtils;
+import java.util.List;
+
+import static runner.ProjectUtils.ProjectType.Folder;
 
 public class _FolderTest extends BaseTest {
 
@@ -267,4 +274,4 @@ public class _FolderTest extends BaseTest {
 
         Assert.assertEquals(searchResult, "Nothing seems to match.");
     }
-
+}
