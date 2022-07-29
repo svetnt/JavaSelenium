@@ -1,17 +1,10 @@
 import model.*;
-import model.*;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
 import runner.BaseTest;
-import runner.ProjectUtils;
 import runner.TestUtils;
-import java.util.List;
 
-import static runner.ProjectUtils.ProjectType.Folder;
 
 public class _FolderTest extends BaseTest {
 
